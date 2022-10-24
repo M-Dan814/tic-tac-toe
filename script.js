@@ -11,26 +11,34 @@ const CreatePlayer = () => {
 
 const GameBoard = (() => {
   const game = ["d", "d", "d", "d", "d", "d", "d", "d", "d"];
+  const possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  let picked = [];
   const play = (icon) => {
-    let index = Math.floor(Math.random() * 9);
-    while (game.indexOf("d") != -1) {
-      if (game[index] != "d") {
-        game[index] = icon;
-      } else {
-        index = Math.floor(Math.random() * 9);
+    let index = Math.floor(Math.random() * possible.length);
+    if (game.indexOf("d") != -1) {
+      if (game[possible[index]] == "d") {
+        game[possible[index]] = icon;
+        picked.push(possible[index]);
+        possible.splice(index, 1);
+        console.log(possible, picked)
       }
-      return game;
+      else {
+        index = Math.floor(Math.random() * possible.length)
+      }
     }
+    console.log(game)
+    return game;
   };
-  return { play };
+  return { play, game };
 })();
 
 const DisplayController = (() => {
   const createDivs = (arr) => {
     for (let i = 0; i < 9; i++) {
       const smallerDivs = document.createElement("div");
-      smallerDivs.classList.add("block")
+      smallerDivs.classList.add("block");
       smallerDivs.classList.add(arr[i]);
+      smallerDivs.setAttribute("target", i);
       if (smallerDivs.classList.contains("O")) {
         smallerDivs.textContent = "O";
       } else if (smallerDivs.classList.contains("X")) {
@@ -40,18 +48,30 @@ const DisplayController = (() => {
     }
   };
 
-  const addFunctionality = (arr) => {
+  const addFunctionality = (arr, icon) => {
+    container.childNodes = "";
     createDivs(arr);
     const userBlocks = document.querySelectorAll(".d");
-    userBlocks.forEach(Block => {
-        Block.addEventListener("click", () => {
-            Block.classList.remove("d");
-            Block.classList.add("X");
-            Block.textContent = "X";
-        })
-    })
-  }
+    userBlocks.forEach((Block) => {
+      Block.addEventListener(
+        "click",
+        () => {
+          Block.classList.remove("d");
+          Block.classList.add("X");
+          Block.textContent = "X";
+          let number = Block.getAttribute("target");
+          GameBoard.game[number] = "X";
+          GameBoard.play(icon);
+        },
+        { once: true }
+      );
+    });
+  };
   return { addFunctionality };
 })();
 
-DisplayController.addFunctionality(GameBoard.play())
+const Computer = Players("Computer", "O");
+DisplayController.addFunctionality(
+  GameBoard.play(Computer.icon),
+  Computer.icon
+);
