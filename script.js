@@ -25,10 +25,11 @@ const GameBoard = (() => {
   return { play };
 })();
 
-const Display = (() => {
+const DisplayController = (() => {
   const createDivs = (arr) => {
     for (let i = 0; i < 9; i++) {
       const smallerDivs = document.createElement("div");
+      smallerDivs.classList.add("block")
       smallerDivs.classList.add(arr[i]);
       if (smallerDivs.classList.contains("O")) {
         smallerDivs.textContent = "O";
@@ -38,6 +39,19 @@ const Display = (() => {
       container.append(smallerDivs);
     }
   };
-  return { createDivs };
+
+  const addFunctionality = (arr) => {
+    createDivs(arr);
+    const userBlocks = document.querySelectorAll(".d");
+    userBlocks.forEach(Block => {
+        Block.addEventListener("click", () => {
+            Block.classList.remove("d");
+            Block.classList.add("X");
+            Block.textContent = "X";
+        })
+    })
+  }
+  return { addFunctionality };
 })();
 
+DisplayController.addFunctionality(GameBoard.play())
