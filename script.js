@@ -1,3 +1,5 @@
+const container = document.querySelector(".container");
+
 const Players = (name, icon) => {
   return { name, icon };
 };
@@ -21,5 +23,21 @@ const GameBoard = (() => {
     }
   };
   return { play };
+})();
+
+const Display = (() => {
+  const createDivs = (arr) => {
+    for (let i = 0; i < 9; i++) {
+      const smallerDivs = document.createElement("div");
+      smallerDivs.classList.add(arr[i]);
+      if (smallerDivs.classList.contains("O")) {
+        smallerDivs.textContent = "O";
+      } else if (smallerDivs.classList.contains("X")) {
+        smallerDivs.textContent = "X";
+      }
+      container.append(smallerDivs);
+    }
+  };
+  return { createDivs };
 })();
 
