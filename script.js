@@ -16,17 +16,20 @@ const GameBoard = (() => {
   const play = (icon) => {
     let index = Math.floor(Math.random() * possible.length);
     if (game.indexOf("d") != -1) {
+      console.log(possible[index]);
       if (game[possible[index]] == "d") {
         game[possible[index]] = icon;
         picked.push(possible[index]);
         possible.splice(index, 1);
-        console.log(possible, picked)
-      }
-      else {
-        index = Math.floor(Math.random() * possible.length)
+        console.log(possible, picked);
+      } else {
+        while (game[possible[index]] != "d") {
+          index = Math.floor(Math.random() * possible.length);
+        }
+        game[possible[index]] = icon;
       }
     }
-    console.log(game)
+    console.log(game);
     return game;
   };
   return { play, game };
@@ -34,6 +37,7 @@ const GameBoard = (() => {
 
 const DisplayController = (() => {
   const createDivs = (arr) => {
+    container.innerHTML = "";
     for (let i = 0; i < 9; i++) {
       const smallerDivs = document.createElement("div");
       smallerDivs.classList.add("block");
@@ -49,7 +53,6 @@ const DisplayController = (() => {
   };
 
   const addFunctionality = (arr, icon) => {
-    container.childNodes = "";
     createDivs(arr);
     const userBlocks = document.querySelectorAll(".d");
     userBlocks.forEach((Block) => {
@@ -62,6 +65,8 @@ const DisplayController = (() => {
           let number = Block.getAttribute("target");
           GameBoard.game[number] = "X";
           GameBoard.play(icon);
+          createDivs(arr);
+          addFunctionality(arr, icon);
         },
         { once: true }
       );
