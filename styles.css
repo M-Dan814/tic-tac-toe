@@ -17,3 +17,11 @@ html, body {
     padding: 12px;
     font-size: 98px;
 }
+
+.X {
+    color: rgb(240, 90, 90);
+}
+
+.O {
+    color: #2323ff;
+}
