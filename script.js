@@ -1,6 +1,10 @@
 const container = document.querySelector(".container");
+const new_game = document.querySelector("#new-game");
+const reset = document.querySelector("#reset");
+const new_player = document.querySelector("#new-player");
 let player_score = 0;
 let comp_score = 0;
+let turn = 0;
 
 const Players = (name, icon) => {
   return { name, icon };
@@ -11,30 +15,13 @@ CreatePlayer = () => {
   return Players(name, "X");
 };
 
-const Player = CreatePlayer();
+let Player = CreatePlayer();
 const Computer = Players("Computer", "O");
 
 const GameBoard = (() => {
   const game = ["d", "d", "d", "d", "d", "d", "d", "d", "d"];
-  const possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  let picked = [];
-  const play = (icon) => {
-    let index = Math.floor(Math.random() * possible.length);
-    if (game.indexOf("d") != -1) {
-      if (game[possible[index]] == "d") {
-        game[possible[index]] = icon;
-        picked.push(possible[index]);
-        possible.splice(index, 1);
-      } else {
-        while (game[possible[index]] != "d") {
-          index = Math.floor(Math.random() * possible.length);
-        }
-        game[possible[index]] = icon;
-      }
-    }
-    return game;
-  };
-  return { play, game };
+
+  return { game };
 })();
 
 const DisplayController = (() => {
@@ -67,6 +54,7 @@ const DisplayController = (() => {
 const Play = (() => {
   let playerIndices = [];
   let compIndices = [];
+  let arr = [...GameBoard.game];
   const getIndices = (arr) => {
     playerIndices = [];
     compIndices = [];
@@ -79,7 +67,26 @@ const Play = (() => {
     }
   };
 
-  const playGame = (arr) => {
+  let possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  let picked = [];
+  const play = () => {
+    let index = Math.floor(Math.random() * possible.length);
+    if (arr.indexOf("d") != -1) {
+      if (arr[possible[index]] == "d") {
+        arr[possible[index]] = "O";
+        picked.push(possible[index]);
+        possible.splice(index, 1);
+      } else {
+        while (arr[possible[index]] != "d") {
+          index = Math.floor(Math.random() * possible.length);
+        }
+        arr[possible[index]] = "O";
+      }
+    }
+    return arr;
+  };
+
+  const playGame = () => {
     const possible_Wins = [
       [0, 1, 2],
       [3, 4, 5],
@@ -102,9 +109,10 @@ const Play = (() => {
           Block.classList.add("X");
           Block.textContent = "X";
           let number = Block.getAttribute("target");
-          GameBoard.game[number] = "X";
-          GameBoard.play("O");
+          arr[number] = "X";
+          play();
           playGame(arr);
+          console.log(arr);
         },
         { once: true }
       );
@@ -114,30 +122,56 @@ const Play = (() => {
     const checker = (arr, target) => target.every((v) => arr.includes(v));
 
     for (let i = 0; i < 8; i++) {
-      console.log(compIndices);
-      console.log(`computer ${i}: ${checker(compIndices, possible_Wins[i])}`);
       if (checker(compIndices, possible_Wins[i])) {
         const comp_Win = document.createElement("div");
         comp_Win.textContent = "The Computer Wins!!!";
         container.append(comp_Win);
         comp_score++;
+        arr = [...GameBoard.game];
         break;
       } else if (checker(playerIndices, possible_Wins[i])) {
         const Player_Win = document.createElement("div");
         Player_Win.textContent = "Congratulations! You Win!";
         container.append(Player_Win);
         player_score++;
+        arr = [...GameBoard.game];
         break;
-      } else if (GameBoard.game.indexOf("d") == -1) {
+      } else if (arr.indexOf("d") == -1) {
         const draw = document.createElement("div");
         draw.textContent = "It's a draw!";
         container.append(draw);
+        arr = [...GameBoard.game];
         break;
       }
     }
   };
 
-  return { playGame };
+  return { play, playGame };
 })();
 
-Play.playGame(GameBoard.game);
+new_game.addEventListener("click", () => {
+  container.innerHTML = "";
+  if (turn % 2 == 0) {
+    Play.playGame();
+    turn++;
+  } else {
+    Play.play();
+    Play.playGame();
+    turn++;
+  }
+});
+
+new_player.addEventListener("click", () => {
+  player_score = 0;
+  comp_score = 0;
+  Player = CreatePlayer();
+  Play.playGame();
+});
+
+reset.addEventListener("click", () => {
+  player_score = 0;
+  comp_score = 0;
+  Play.playGame();
+});
+
+Play.playGame();
