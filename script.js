@@ -40,8 +40,11 @@ const DisplayController = (() => {
       container.append(smallerDivs);
     }
     const score_div = document.createElement("div");
+    score_div.classList.add("score");
     const player = document.createElement("div");
+    player.id = "player";
     const comp = document.createElement("div");
+    comp.id = "comp ";
     player.textContent = `${Player.name}: ${player_score}`;
     comp.textContent = `Computer: ${comp_score}`;
     score_div.append(player, comp);
@@ -125,6 +128,8 @@ const Play = (() => {
       if (checker(compIndices, possible_Wins[i])) {
         const comp_Win = document.createElement("div");
         comp_Win.textContent = "The Computer Wins!!!";
+        comp_Win.id = "compWin";
+        comp_Win.classList.add("result");
         container.append(comp_Win);
         comp_score++;
         arr = [...GameBoard.game];
@@ -132,6 +137,8 @@ const Play = (() => {
       } else if (checker(playerIndices, possible_Wins[i])) {
         const Player_Win = document.createElement("div");
         Player_Win.textContent = "Congratulations! You Win!";
+        Player_Win.id = "playerWin";
+        Player_Win.classList.add("result");
         container.append(Player_Win);
         player_score++;
         arr = [...GameBoard.game];
@@ -139,6 +146,8 @@ const Play = (() => {
       } else if (arr.indexOf("d") == -1) {
         const draw = document.createElement("div");
         draw.textContent = "It's a draw!";
+        draw.id = "draw";
+        draw.classList.add("result");
         container.append(draw);
         arr = [...GameBoard.game];
         break;
