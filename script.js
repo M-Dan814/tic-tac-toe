@@ -145,7 +145,7 @@ const Play = (() => {
         arr = [...GameBoard.game];
         possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         break;
-      } else if (i == 8) {
+      } else if (i == 7) {
         if (arr.indexOf("d") == -1) {
           const draw = document.createElement("div");
           draw.textContent = "It's a draw!";
