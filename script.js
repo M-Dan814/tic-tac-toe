@@ -71,19 +71,18 @@ const Play = (() => {
   };
 
   let possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  let picked = [];
   const play = () => {
     let index = Math.floor(Math.random() * possible.length);
     if (arr.indexOf("d") != -1) {
       if (arr[possible[index]] == "d") {
         arr[possible[index]] = "O";
-        picked.push(possible[index]);
         possible.splice(index, 1);
       } else {
         while (arr[possible[index]] != "d") {
           index = Math.floor(Math.random() * possible.length);
         }
         arr[possible[index]] = "O";
+        possible.splice(index, 1);
       }
     }
     return arr;
@@ -113,9 +112,9 @@ const Play = (() => {
           Block.textContent = "X";
           let number = Block.getAttribute("target");
           arr[number] = "X";
+          possible.splice(number, 1);
           play();
-          playGame(arr);
-          console.log(arr);
+          playGame();
         },
         { once: true }
       );
@@ -125,16 +124,8 @@ const Play = (() => {
     const checker = (arr, target) => target.every((v) => arr.includes(v));
 
     for (let i = 0; i < 8; i++) {
-      if (checker(compIndices, possible_Wins[i])) {
-        const comp_Win = document.createElement("div");
-        comp_Win.textContent = "The Computer Wins!!!";
-        comp_Win.id = "compWin";
-        comp_Win.classList.add("result");
-        container.append(comp_Win);
-        comp_score++;
-        arr = [...GameBoard.game];
-        break;
-      } else if (checker(playerIndices, possible_Wins[i])) {
+      console.log(`Chech number ${i}`);
+      if (checker(playerIndices, possible_Wins[i])) {
         const Player_Win = document.createElement("div");
         Player_Win.textContent = "Congratulations! You Win!";
         Player_Win.id = "playerWin";
@@ -142,15 +133,29 @@ const Play = (() => {
         container.append(Player_Win);
         player_score++;
         arr = [...GameBoard.game];
+        possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         break;
-      } else if (arr.indexOf("d") == -1) {
-        const draw = document.createElement("div");
-        draw.textContent = "It's a draw!";
-        draw.id = "draw";
-        draw.classList.add("result");
-        container.append(draw);
+      } else if (checker(compIndices, possible_Wins[i])) {
+        const comp_Win = document.createElement("div");
+        comp_Win.textContent = "The Computer Wins!!!";
+        comp_Win.id = "compWin";
+        comp_Win.classList.add("result");
+        container.append(comp_Win);
+        comp_score++;
         arr = [...GameBoard.game];
+        possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         break;
+      } else if (i == 8) {
+        if (arr.indexOf("d") == -1) {
+          const draw = document.createElement("div");
+          draw.textContent = "It's a draw!";
+          draw.id = "draw";
+          draw.classList.add("result");
+          container.append(draw);
+          arr = [...GameBoard.game];
+          possible = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+          break;
+        }
       }
     }
   };
